@@ -1,0 +1,81 @@
+{
+  "mcpServers": {
+    "memory-keeper": {
+      "command": "node",
+      "args": ["memory-keeper.js"],
+      "env": {
+        "DEBUG": "mcp:*"
+      },
+      "capabilities": [
+        "tools",
+        "resources",
+        "prompts"
+      ],
+      "description": "MCP server for persistent context management in AI coding assistants",
+      "version": "1.0.0"
+    },
+    "firecrawl": {
+      "command": "node",
+      "args": ["firecrawl-mcp.js"],
+      "env": {
+        "FIRECRAWL_API_KEY": "${FIRECRAWL_API_KEY}"
+      },
+      "capabilities": [
+        "tools",
+        "resources"
+      ],
+      "description": "Web scraping and content extraction MCP server",
+      "version": "1.0.0"
+    },
+    "browserbase": {
+      "command": "node",
+      "args": ["browserbase-mcp.js"],
+      "env": {
+        "BROWSERBASE_API_KEY": "${BROWSERBASE_API_KEY}"
+      },
+      "capabilities": [
+        "tools",
+        "resources"
+      ],
+      "description": "Headless browser API for web automation and context capture",
+      "version": "1.0.0"
+    },
+    "anthropic-skills": {
+      "command": "node",
+      "args": ["anthropic-skills-mcp.js"],
+      "capabilities": [
+        "skills",
+        "prompts",
+        "plugins"
+      ],
+      "description": "Anthropic Skills framework for frontend design and agent capabilities",
+      "version": "1.0.0"
+    }
+  },
+  "agentConfig": {
+    "contextCapture": {
+      "enabled": true,
+      "providers": [
+        "memory-keeper",
+        "browserbase"
+      ]
+    },
+    "featureExtraction": {
+      "enabled": true,
+      "providers": [
+        "firecrawl",
+        "memory-keeper"
+      ]
+    },
+    "skillsFramework": {
+      "enabled": true,
+      "provider": "anthropic-skills"
+    }
+  },
+  "metadata": {
+    "project": "chunkit",
+    "purpose": "Feature extraction, context capture, and agentic development framework",
+    "createdAt": "2025-01-09T00:00:00Z",
+    "framework": "Anthropic Skills & Prompts"
+  }
+}
