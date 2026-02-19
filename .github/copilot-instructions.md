@@ -1,26 +1,51 @@
-# Copilot Instructions — docs-copy (Fundation Agent Kit)
+# Copilot Instructions — Chunkit (Fundation Agent Kit)
+
+**ID Mestre:** 180226-234000
+**Correlação:** [`aiob3/llm-readable-kit`](https://github.com/aiob3/llm-readable-kit)
 
 ## Propósito do Repositório
 
-Este é um **kit portável de extração de frameworks LLM-readable** (ID Mestre: 060226-191500). Ele transforma conhecimento tácito de features de codebase em documentação estruturada e replicável, usando o protocolo **Fundation Agent** com loop metacognitivo recursivo.
+Este é um repositório **dual** que integra dois kits complementares:
 
-**Não é um projeto de aplicação** — é um kit de documentação/extração que gera artefatos em `docs-copy/components/`.
+1. **llm-readable-kit** (feature-centric) — Kit portável de extração de frameworks LLM-readable (ID Mestre: 060226-191500). Transforma conhecimento tácito de **features de codebase** em documentação estruturada e replicável.
+
+2. **chunkit-core** (project-centric) — Kit de governança de chunks de projeto. Transforma conhecimento de **arquitetura e fases de projetos** em chunks estruturados e rastreáveis.
+
+Ambos usam o protocolo **Fundation Agent** com loop metacognitivo recursivo.
+
+**Não é um projeto de aplicação** — é um sistema de documentação/extração que gera artefatos em:
+- `docs-copy/components/` (features)
+- `chunkit-output/` (chunks de projeto)
 
 ## Estrutura e Navegação
 
-O kit operável está em `docs-copy/` — essa é a pasta copiada para projetos-alvo:
+### Entry Points (escolher conforme contexto)
+
+1. **Para documentar features de codebase:** `docs-copy/CODEX_TASK.md` (feature-centric)
+2. **Para documentar chunks de projeto:** `CHUNKIT_TASK.md` (project-centric)
+
+### Estrutura Completa
 
 ```
-docs-copy/
-├── CODEX_TASK.md              ← Entry point para agentes (ler PRIMEIRO)
-├── fundation-agent.prompt.md  ← Protocolo de execução (loop metacognitivo)
-├── feature-recurso-progressbar.md ← Referência ESTRUTURAL (outro projeto, não copiar código)
-├── framework-llm-readable.semantic-export.md ← Exemplo completo homologado (READ-ONLY)
-├── chunks/00..08-*.md         ← Instruções atômicas, carregar SELETIVAMENTE por tarefa
-├── components/                ← Pasta de ENTREGA — output revisado pelo Operador (HITL)
-├── prompts/                   ← Prompts auxiliares
-├── samples/                   ← Amostras de dados (ex: ffmpeg-stderr-samples.txt)
-└── reference_study_sop.md     ← Contexto histórico conversacional (opcional)
+chunkit/
+├── CHUNKIT_TASK.md                ← Entry point para chunkit-core (project-centric)
+├── CORRELATION.md                 ← Boundary e dependências entre os dois kits
+├── chunkit-output/                ← Chunks de projeto gerados (HITL pendente)
+│   ├── README.md
+│   ├── TEMPLATE.chunkit.skill.md
+│   └── chunkit.reference-chunkit-core.skill.md
+│
+├── docs-copy/                     ← Kit llm-readable (feature-centric) — COPIÁVEL
+│   ├── CODEX_TASK.md              ← Entry point para llm-readable-kit
+│   ├── fundation-agent.prompt.md  ← Protocolo Fundation Agent (compartilhado)
+│   ├── feature-recurso-progressbar.md ← Referência estrutural
+│   ├── framework-llm-readable.semantic-export.md ← Exemplo completo
+│   ├── chunks/00..08-*.md         ← Instruções atômicas (carregar seletivamente)
+│   ├── components/                ← Features documentadas (HITL aprovado)
+│   ├── samples/                   ← Amostras de dados
+│   └── reference_study_sop.md     ← Contexto histórico
+│
+└── [arquivos de raiz — referência ao llm-readable-kit original]
 ```
 
 ### Regra de carregamento de chunks
@@ -34,10 +59,21 @@ Não carregar todos os chunks sempre. Usar o mapa em `docs-copy/CODEX_TASK.md` s
 
 ## Workflow Obrigatório
 
+### Para Feature-Centric (llm-readable-kit)
+
 1. Operador copia `docs-copy/` para o projeto-alvo e preenche variáveis em `docs-copy/CODEX_TASK.md` (`FEATURE_NAME`, `CODEBASE_PATH`, `ENTRY_POINTS`, etc.)
 2. Agente lê `docs-copy/CODEX_TASK.md` como entry point
-3. Agente executa pipeline: Intake (6 campos) → Derivação (meios) → Insights (≥3) → Tríade (Spec + Snippet + Guia)
+3. Agente executa pipeline: Intake (6 campos) → Derivação (meios) → Insights (≥3) → Tríade (Feature Spec + Snippet + Guia)
 4. Output salvo em `docs-copy/components/llm-readable.<FEATURE_NAME>.skill.md`
+5. **Gate HITL**: agente PARA e aguarda aprovação do Operador — nunca auto-aprovar
+6. Scoring L0-L5 ≥ 80/100 obrigatório antes de depositar
+
+### Para Project-Centric (chunkit-core)
+
+1. Operador preenche variáveis em `CHUNKIT_TASK.md` (`PROJECT_NAME`, `CHUNK_TYPE`, `CHUNK_SCOPE`, `TARGET_ARTIFACTS`, etc.)
+2. Agente lê `CHUNKIT_TASK.md` como entry point
+3. Agente executa pipeline adaptado: Intake (6 campos) → Derivação (meios) → Síntese (insights de governança ≥3) → Tríade (Chunk Spec + Schema + Guia)
+4. Output salvo em `chunkit-output/chunkit.<CHUNK_TYPE>-<CHUNK_SCOPE>.skill.md`
 5. **Gate HITL**: agente PARA e aguarda aprovação do Operador — nunca auto-aprovar
 6. Scoring L0-L5 ≥ 80/100 obrigatório antes de depositar
 
@@ -45,8 +81,13 @@ Não carregar todos os chunks sempre. Usar o mapa em `docs-copy/CODEX_TASK.md` s
 
 ### Nomenclatura de arquivos
 
+**llm-readable-kit:**
 - Entregáveis: `llm-readable.<feature-kebab>.skill.md` (dentro de `docs-copy/components/`)
-- Chunks: `docs-copy/chunks/NN-<preocupação>.md` (numeração sequencial, 00-08)
+- Chunks instrucionais: `docs-copy/chunks/NN-<preocupação>.md` (numeração sequencial, 00-08)
+
+**chunkit-core:**
+- Entregáveis: `chunkit.<tipo>-<escopo-kebab>.skill.md` (dentro de `chunkit-output/`)
+- Tipos: `blueprint` | `reference` | `scaffold` | `validation`
 
 ### Idioma
 
@@ -60,18 +101,29 @@ Não carregar todos os chunks sempre. Usar o mapa em `docs-copy/CODEX_TASK.md` s
 
 ### Tríade obrigatória por entregável
 
-Todo `skill.md` deve conter:
-
+**llm-readable-kit (feature-centric):**
 1. **Feature Spec** — problema → solução → fluxo → critérios de aceite
 2. **Snippet Técnico** — assinatura + parâmetros + pseudocódigo + código real + grafo de dependências
 3. **Guia de Adoção** — pré-requisitos + passos + testes + troubleshooting
 
+**chunkit-core (project-centric):**
+1. **Chunk Spec** — o que é → por que existe → quando usar → critérios
+2. **Schema/Assinatura** — estrutura e convenções do chunk
+3. **Guia de Uso** — como instanciar → como validar → troubleshooting
+
 ### Taxonomia de tags
 
 - Mínimo 3 tags por artefato, formato `CATEGORIA:subtopic`
+
+**llm-readable-kit:**
 - Categorias: `PROG` (progresso), `PARS` (parsing), `QUEUE` (filas), `UIFB` (UI feedback), `RESIL` (resiliência), `PIPE` (pipeline)
 
+**chunkit-core:**
+- Categorias: `ARCH` (arquitetura), `GOV` (governança), `CAF` (Cloud Adoption Framework), `PHASE` (fases), `GATE` (decision gates), `META` (meta-chunking)
+
 ## Invariantes (nunca violar)
+
+### llm-readable-kit (feature-centric)
 
 | ID    | Contrato                                                                             |
 | ----- | ------------------------------------------------------------------------------------ |
@@ -81,6 +133,17 @@ Todo `skill.md` deve conter:
 | INV-4 | Loops deduplicados por assinatura de edges ordenadas                                 |
 | INV-5 | Projeções são read-only — nunca alteram SemanticGraph ou Model                       |
 | INV-6 | `toSemanticJSON` é SSOT semântico; projeções consomem o mesmo graph                  |
+
+### chunkit-core (project-centric)
+
+| ID       | Contrato                                                                      |
+| -------- | ----------------------------------------------------------------------------- |
+| CHK-INV-1| Chunks NUNCA dependem de implementações específicas de outros projetos        |
+| CHK-INV-2| Campos ausentes no Intake = valores padrão neutros                            |
+| CHK-INV-3| Nomenclatura obrigatória: `chunkit.<tipo>-<escopo-kebab>.skill.md`           |
+| CHK-INV-4| Score mínimo 80/100 antes de HITL                                             |
+| CHK-INV-5| HITL é gate obrigatório — nenhum chunk é auto-aprovado                        |
+| CHK-INV-6| ID Mestre em formato `DDMMYY-HHMMSS` (GMT-3, 24h, sem separadores)           |
 
 ## Scoring (Auto-avaliação Logarítmica L0-L5)
 
